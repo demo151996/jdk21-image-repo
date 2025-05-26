@@ -6,23 +6,18 @@ platform: linux
 image_resource:
   type: docker-image
   source: 
-     repository: concourse/docker # Use a Concourse-provided image for building Docker images
+     repository: vito/oci-build-task  # Use a Concourse-provided image for building Docker images
 
 inputs:
   - name: jdk21-image-repo # This input will contain your GitHub repository content (including Dockerfile)
 
 outputs:
-  - name: image # This output will contain the built Docker image (as a tarball)
+  - name: built-image # This output will contain the built Docker image (as a tarball)
 
 params:
+   DOCKER_BUILDKIT: "0" 
    DOCKERFILE_CONTEXT: jdk21-image-repo # Pass the input repo as the Docker build context
    DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
 
 run:
-  path: sh
-  args:
-    - -exc
-    - |
-      cd jdk21-image-repo
-      /usr/bin/docker build -t built-image:latest .
-      /usr/bin/docker save built-image:latest > ../image/image.tar
+  path: build

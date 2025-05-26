@@ -6,14 +6,13 @@ platform: linux
 image_resource:
   type: docker-image
   source: 
-    repository: hub.comcast.net/xsp/concourse/servicebox
-    tag: 2.0.0
-
+    repository: concourse/docker
+    
 inputs:
   - name: jdk21-image-repo # This input will contain your GitHub repository content (including Dockerfile)
 
 outputs:
-  - name: built-image # This output will contain the built Docker image (as a tarball)
+  - name: image # This output will contain the built Docker image (as a tarball)
 
 params:
    DOCKER_BUILDKIT: "0" 
@@ -21,5 +20,21 @@ params:
    DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
 
 run:
-   path: build
+   path: sh # IMPORTANT: Tell Concourse to execute a shell script
+   args:
+    - -exc # Exit on error, echo commands
+    - |
+      echo "Starting Docker image build..."
+      # Change to the directory containing your Dockerfile
+      cd jdk21-image-repo
+
+      # Build the Docker image. Tag it as 'built-image:latest' internally for saving.
+      # The '.' specifies the current directory as the build context.
+      /usr/bin/docker build -t built-image:latest .
+      echo "Docker image built successfully."
+
+      # Save the built image as a tarball to the 'image' output directory.
+      # The path must be relative to the task's root. '../image' refers to the 'image' output.
+      /usr/bin/docker save built-image:latest > ../image/image.tar
+      echo "Image saved to output artifact."
 

@@ -18,5 +18,15 @@ params:
    DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
 
 run:
-   path: build
+  path: /bin/sh
+  args:
+    - -exc
+    - |
+      cd "${DOCKERFILE_CONTEXT}"
+      DOCKERFILE_ARG=""
+      if [ -n "${DOCKERFILE_PATH}" ]; then
+        DOCKERFILE_ARG="-f ${DOCKERFILE_PATH}"
+      fi
+      /usr/bin/oci-build --tag latest ${DOCKERFILE_ARG} --target-dir ../built-image .
+      echo "Docker image build complete and saved to 'built-image' output directory."
 

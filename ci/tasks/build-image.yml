@@ -16,3 +16,7 @@ outputs:
 params:
    DOCKERFILE_CONTEXT: jdk21-image-repo # Pass the input repo as the Docker build context
    DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
+
+run:
+   path: build
+

@@ -1,0 +1,17 @@
+# minimal-pipeline.yml
+jobs:
+  - name: test-task
+    plan:
+      - task: hello-world
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: busybox} # Use a tiny image
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                echo "Hello from Concourse!"
+                ls -la /

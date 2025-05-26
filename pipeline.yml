@@ -4,14 +4,13 @@ resources:
     source:
       uri: https://github.com/CarolineMarshel/jdk21-repo.git
       branch: main
-      webhook_token: ((webhook-token))
 
   - name: jdk21-image
     type: registry-image
     source:
       repository: ghcr.io/demo151996/jdk21-custom
       username: CarolineMarshel
-      password: ((github-pat))
+      password: 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
 
 jobs:
   - name: build-and-push-jdk21

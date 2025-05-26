@@ -1,0 +1,23 @@
+resources:
+  - name: jdk21-image-repo
+    type: git
+    source:
+      uri: https://github.com/CarolineMarshel/jdk21-repo.git
+      branch: main
+      webhook_token: ((webhook-token))
+
+  - name: jdk21-image
+    type: registry-image
+    source:
+      repository: ghcr.io/demo151996/jdk21-custom
+      username: CarolineMarshel
+      password: ((github-pat))
+
+jobs:
+  - name: build-and-push-jdk21
+    plan:
+      - get: jdk21-image-repo
+        trigger: true
+      - put: jdk21-image
+        params:
+          build: jdk21-image-repo

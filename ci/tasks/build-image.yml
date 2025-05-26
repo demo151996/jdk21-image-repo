@@ -6,7 +6,8 @@ platform: linux
 image_resource:
   type: docker-image
   source: 
-     repository: vito/oci-build-task  # Use a Concourse-provided image for building Docker images
+    repository: hub.comcast.net/xsp/concourse/servicebox
+    tag: 2.0.0
 
 inputs:
   - name: jdk21-image-repo # This input will contain your GitHub repository content (including Dockerfile)
@@ -20,5 +21,5 @@ params:
    DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
 
 run:
-  path: build
+   path: jdk21-image-repo/ci/tasks/build-image.sh
 

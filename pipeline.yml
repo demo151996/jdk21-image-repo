@@ -2,7 +2,7 @@ resources:
   - name: jdk21-image-repo
     type: git
     source:
-      uri: https://github.com/CarolineMarshel/jdk21-repo.git
+      uri: https://github.com/demo151996/jdk21-image-repo.git
       branch: main
 
   - name: jdk21-image

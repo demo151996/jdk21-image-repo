@@ -22,9 +22,9 @@ params:
    DOCKERFILE_PATH: jdk21-image-repo/Dockerfile
 
 run:
-  path: sh # Always 'sh' when providing an inline script
+  path: sh
   args:
-    - -exc # Exit immediately on error, echo commands
+    - -exc
     - |
       echo "--- Starting build-image task ---"
       echo "Current directory: $(pwd)"
@@ -37,17 +37,14 @@ run:
       echo "Contents of jdk21-image-repo:"
       ls -la
 
-      # Ensure Dockerfile exists where expected
       if [ ! -f Dockerfile ]; then
         echo "ERROR: Dockerfile not found in $(pwd)/Dockerfile"
         exit 1
       fi
 
       echo "Attempting to build Docker image..."
-      # Build the Docker image. Tag it for saving.
-      # The '.' specifies the current directory (jdk21-image-repo) as the build context.
       /usr/bin/docker build -t built-image:latest .
-      BUILD_STATUS=$? # Capture exit status of docker build
+      BUILD_STATUS=$?
       if [ $BUILD_STATUS -ne 0 ]; then
         echo "ERROR: Docker build failed with exit status $BUILD_STATUS"
         exit $BUILD_STATUS
@@ -55,12 +52,9 @@ run:
       echo "Docker image 'built-image:latest' created successfully."
 
       echo "Attempting to save Docker image to output artifact..."
-      # Save the built image as a tarball to the 'image' output directory.
-      # The path must be relative to the task's root. '../image' refers to the 'image' output.
-      # Make sure the target directory exists (though Concourse creates it)
       mkdir -p ../image # Ensure the output directory exists
       /usr/bin/docker save built-image:latest > ../image/image.tar
-      SAVE_STATUS=$? # Capture exit status of docker save
+      SAVE_STATUS=$?
       if [ $SAVE_STATUS -ne 0 ]; then
         echo "ERROR: Docker save failed with exit status $SAVE_STATUS"
         exit $SAVE_STATUS
@@ -69,12 +63,11 @@ run:
 
       echo "Verifying contents of output 'image' directory:"
       ls -la ../image
-      # Check if the tar file actually has content (is not empty)
       TAR_SIZE=$(stat -c%s ../image/image.tar)
       echo "Size of ../image/image.tar: $TAR_SIZE bytes"
       if [ $TAR_SIZE -eq 0 ]; then
         echo "WARNING: The image.tar file is empty!"
-        exit 1 # Treat empty tar as a fatal error for this diagnosis
+        exit 1
       fi
 
       echo "--- build-image task completed successfully ---"

@@ -13,10 +13,27 @@ resources:
       password: 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
 
 jobs:
+  # Job to build and push the JDK 21 Docker image
   - name: build-and-push-jdk21
     plan:
+      # 1. Get the source code (Dockerfile) from GitHub
       - get: jdk21-image-repo
-        trigger: true
+        trigger: true # This job will trigger automatically on new commits to jdk21-image-repo
+
+      # 2. Build the Docker image using a dedicated task
+      - task: build-image
+        file: jdk21-image-repo/ci/tasks/build-image.yml # Path to the task definition for building the image
+        params:
+          DOCKERFILE_CONTEXT: jdk21-image-repo # Pass the input repo as the Docker build context
+          DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
+        outputs:
+          - name: built-image # This output will contain the built Docker image
+            path: built-image-output # The path where the image tarball will be stored
+
+      # 3. Push the built image to GHCR
       - put: jdk21-custom
         params:
-          build: jdk21-image-repo
+          image: built-image # Refer to the output artifact from the 'build-image' task
+          tag: latest # Tag the image as 'latest'
+          # You can use dynamic tags for versioning if needed, e.g.:
+          # tag: "build-((build-and-push-jdk21.version))"

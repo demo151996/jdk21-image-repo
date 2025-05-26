@@ -20,3 +20,5 @@ jobs:
       - put: jdk21-image
         params:
           build: jdk21-image-repo
+        task-config:
+          privileged: true

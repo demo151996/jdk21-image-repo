@@ -5,7 +5,8 @@ platform: linux
 
 image_resource:
   type: docker-image
-  source: {repository: concourse/oci-build-task} # Use a Concourse-provided image for building Docker images
+  source: 
+     repository: concourse/oci-build-task # Use a Concourse-provided image for building Docker images
 
 inputs:
   - name: jdk21-image-repo # This input will contain your GitHub repository content (including Dockerfile)
@@ -18,15 +19,4 @@ params:
    DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
 
 run:
-  path: /bin/sh
-  args:
-    - -exc
-    - |
-      cd "${DOCKERFILE_CONTEXT}"
-      DOCKERFILE_ARG=""
-      if [ -n "${DOCKERFILE_PATH}" ]; then
-        DOCKERFILE_ARG="-f ${DOCKERFILE_PATH}"
-      fi
-      /usr/bin/oci-build --tag latest ${DOCKERFILE_ARG} --target-dir ../built-image .
-      echo "Docker image build complete and saved to 'built-image' output directory."
-
+  path: build

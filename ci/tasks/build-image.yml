@@ -5,52 +5,6 @@ platform: linux
 
 image_resource:
   type: docker-image
-  source: 
-    repository: concourse/docker
-    
-inputs:
-  - name: jdk21-image-repo # This input will contain your GitHub repository content (including Dockerfile)
-
-outputs:
-  - name: image # This output will contain the built Docker image (as a tarball)
-
-params:
-   DOCKER_BUILDKIT: "0" 
-   DOCKERFILE_CONTEXT: jdk21-image-repo # Pass the input repo as the Docker build context
-   DOCKERFILE_PATH: jdk21-image-repo/Dockerfile # If your Dockerfile is not at the root of the context
-
-run:
-   path: sh # IMPORTANT: Tell Concourse to execute a shell script
-   My apologies! It seems we're in a loop with the "version is missing from previous step" error, even after attempting to correct the task definition multiple times. This is incredibly frustrating, and I understand your patience must be wearing thin.
-
-Let's approach this with a fresh perspective, assuming the most likely remaining culprits based on Concourse's behavior.
-
-The "version is missing from previous step" error with a registry-image put step is always about the artifact being passed to it. When the registry-image resource's put step fails with this message, it means:
-
-The image parameter (i.e., image: image in your put step) is indeed pointing to the correct output of the previous task (build-image). This part seems correct.
-However, the content of that image output directory (which should contain image.tar and potentially metadata files) is either:
-Empty or incomplete.
-Not in the format the registry-image resource expects for an image artifact.
-Given our back-and-forth, the most likely remaining issues are:
-
-Scenario 1: The docker save command is not correctly saving the image.
-This could be due to the Docker build itself failing within the build-image task, even if the task isn't showing a top-level error. Or the pathing is slightly off.
-
-Scenario 2: The Concourse worker's environment is still somehow interfering with the docker save operation or the creation of the output artifact.
-This is less common for a basic docker save, but not impossible if there are underlying filesystem or permission issues at the Concourse worker level that are not directly reported as an exec failed or operation not permitted error by the task itself.
-
-Let's refine the build-image.yml script with more verbose logging and a direct check for the created tarball.
-
-Refined ci/tasks/build-image.yml (with diagnostics)
-YAML
-
-# ci/tasks/build-image.yml
-# --- Concourse Task for Building a Docker Image ---
-
-platform: linux
-
-image_resource:
-  type: docker-image
   source:
     repository: concourse/docker # This is crucial for the docker CLI
     tag: latest # Explicitly use 'latest' or a specific version like '20.10.24'

@@ -1,4 +1,3 @@
 FROM eclipse-temurin:21-jdk
-LABEL maintainer="your-email@example.com"
-WORKDIR /workspace
+LABEL maintainer="jenita.marshel@gmail.com"
 CMD ["java", "-version"]

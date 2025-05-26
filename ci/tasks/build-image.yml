@@ -6,7 +6,7 @@ platform: linux
 image_resource:
   type: docker-image
   source: 
-     repository: concourse/oci-build-task # Use a Concourse-provided image for building Docker images
+     repository: vito/oci-build-task # Use a Concourse-provided image for building Docker images
 
 inputs:
   - name: jdk21-image-repo # This input will contain your GitHub repository content (including Dockerfile)

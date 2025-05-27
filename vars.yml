@@ -1,0 +1,5 @@
+ghcr_username: comcast-devx-pace
+image_repo: jdk21-image
+commit_hash: latest
+local-git-token: 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
+local-git-username: CarolineMarshel

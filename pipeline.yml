@@ -2,15 +2,14 @@ resources:
   - name: jdk21-image-repo
     type: git
     source:
-      uri: https://github.com/comcast-devx-pace/jdk21-image-repo.git
+      uri: https://github.com/demo151996/jdk21-image-repo.git
       branch: main
-
   - name: jdk21-image
     type: docker-image
     source:
-      repository: ghcr.io/((ghcr_username))/((image_repo))
-      username: ((ghcr_username))
-      password: ((ghcr_token))
+      repository: ghcr.io/demo151996/jdk21-image
+      username: ((local-git-username))
+      password: ((local-git-token))
       tag: latest
 jobs:
   - name: build-jdk21-image
@@ -20,8 +19,7 @@ jobs:
       - put: jdk21-image
         params:
           build: jdk21-image-repo
-  
-  - name: run-task-with-image
+  - name: run-tasks-with-image
     plan:
       - get: jdk21-image-repo
         passed: [build-jdk21-image]
@@ -32,10 +30,11 @@ jobs:
           platform: linux
           image_resource:
             type: registry-image
-          source:
-            repository: ghcr.io/((ghcr_username))/((image_repo))
-            tag: latest
-            username: ((ghcr_username))
-            password: ((ghcr_token))
+            source:
+              repository: ghcr.io/demo151996/jdk21-image
+              tag: latest
+              username: ((local-git-username))
+              password: ((local-git-token))
           run:
-            path: /app/do-something.sh
+            path: java
+            args: ["-version"]

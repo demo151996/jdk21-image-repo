@@ -1,4 +1,5 @@
-FROM eclipse-temurin:21-jdk
+FROM amazoncorretto:21.0.7
+
 LABEL maintainer="jenita.marshel@gmail.com"
 WORKDIR /app
 RUN echo '#!/bin/bash\n\
